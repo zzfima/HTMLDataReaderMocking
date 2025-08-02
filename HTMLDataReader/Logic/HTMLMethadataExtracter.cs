@@ -1,6 +1,6 @@
 ﻿namespace Logic
 {
-    public class HTMLMethadataExtracter
+    public class HTMLMethadataExtracter : IHTMLMethadataExtracter
     {
         private readonly string _page;
 
