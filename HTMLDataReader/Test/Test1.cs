@@ -27,10 +27,28 @@ namespace Test
         {
             //ARRANGE
             var mock = new Mock<IHTMLProvider>();
-            string mockHtml = string.Concat(Enumerable.Repeat("line\n", 1027 - 182)) + string.Concat(Enumerable.Repeat("<div>\n", 182));
+            string html = string.Concat(Enumerable.Repeat("line\n", 1027 - 182)) + string.Concat(Enumerable.Repeat("<div>\n", 182));
+            mock.Setup(p => p.ReadHTMLAsync()).ReturnsAsync(html);
+            IHTMLProvider htmlProvider = mock.Object;
+            IHTMLMethadataExtracter extracter = new HTMLMethadataExtracter(htmlProvider);
 
-            mock.Setup(p => p.ReadHTMLAsync()).ReturnsAsync(mockHtml);
-            IHTMLMethadataExtracter extracter = new HTMLMethadataExtracter(mock.Object);
+            //ACT
+            int lines = extracter.CountLines();
+            int divCount = extracter.CountHTMLTags(HTMLTag.div);
+
+            //ASSERT
+            Assert.IsTrue(lines == 1027, "Line count should be greater than 0");
+            Assert.IsTrue(divCount == 182, "Div count should be greater than 0");
+        }
+
+        [TestMethod]
+        public void TestMethodMockingIHTMLMethadataExtracter()
+        {
+            //ARRANGE
+            var mock = new Mock<IHTMLMethadataExtracter>();
+            mock.Setup(e => e.CountLines()).Returns(1027);
+            mock.Setup(e => e.CountHTMLTags(HTMLTag.div)).Returns(182);
+            IHTMLMethadataExtracter extracter = mock.Object;
 
             //ACT
             int lines = extracter.CountLines();
